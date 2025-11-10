@@ -233,6 +233,7 @@ import { Resource } from '../../../core/models/resource.model';
 export class ResourceListComponent implements OnInit {
   private resourceService = inject(ResourceService);
   private categoryService = inject(CategoryService);
+  
   private router = inject(Router);
   private route = inject(ActivatedRoute);
   categories = this.categoryService.getCategories;

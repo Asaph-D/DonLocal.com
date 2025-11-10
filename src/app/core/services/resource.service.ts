@@ -33,7 +33,7 @@ export class ResourceService {
       title: 'Cours de couture à domicile',
       description: 'Formatrice expérimentée propose cours de couture pour débutants et intermédiaires.',
       category: 'service',
-      imageUrl: 'https://images.unsplash.com/photo-1558769132-cb1aea3c6e37?w=400',
+      imageUrl: 'https://images.unsplash.com/photo-1509062522246-3755977927d7',
       location: 'Yaoundé, Bastos',
       author: {
         name: 'Solange Mbida',
