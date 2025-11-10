@@ -1,0 +1,367 @@
+<div class="min-h-screen pt-32 pb-20 text-white bg-black">
+      <div class="max-w-4xl px-4 mx-auto sm:px-6 lg:px-8">
+        
+        <!-- Header -->
+        <div class="mb-12">
+          <h1 class="mb-4 text-4xl font-light md:text-5xl">
+            {{ isEditMode() ? 'Modifier l\'annonce' : 'Publier une annonce' }}
+          </h1>
+          <p class="font-light text-gray-400">
+            {{ isEditMode() ? 'Mettez à jour les informations de votre annonce' : 'Partagez une ressource avec votre communauté' }}
+          </p>
+        </div>
+
+        <!-- Form -->
+        <div class="p-8 border bg-zinc-900 border-white/10 md:p-12">
+          <div [formGroup]="resourceForm" class="space-y-8">
+            
+            <!-- Titre -->
+            <div>
+              <label class="block mb-3 text-sm font-medium tracking-wide">
+                TITRE DE L'ANNONCE <span class="text-red-500">*</span>
+              </label>
+              <input 
+                type="text"
+                formControlName="title"
+                placeholder="Ex: Table en bois massif"
+                class="w-full px-4 py-4 text-white placeholder-gray-500 transition-all bg-black border focus:outline-none"
+                [ngClass]="{'border-white/10': !isFieldInvalid('title')}"
+                [class.border-red-500]="isFieldInvalid('title')">
+              @if (isFieldInvalid('title')) {
+                <p class="mt-2 text-sm text-red-500">
+                  Le titre est requis (minimum 5 caractères)
+                </p>
+              }
+            </div>
+
+            <!-- Catégorie -->
+            <div>
+              <label class="block mb-3 text-sm font-medium tracking-wide">
+                CATÉGORIE <span class="text-red-500">*</span>
+              </label>
+              <div class="grid grid-cols-2 gap-4 md:grid-cols-4">
+                @for (cat of categories(); track cat.id) {
+                  <button
+                    type="button"
+                    (click)="selectCategory(cat.id)"
+                    [class.bg-emerald-500]="selectedCategory() === cat.id"
+                    [class.text-black]="selectedCategory() === cat.id"
+                    [class.border-emerald-500]="selectedCategory() === cat.id"
+                    [class.bg-zinc-800]="selectedCategory() !== cat.id"
+                    [ngClass]="{'border-white/10': selectedCategory() !== cat.id}"
+                    class="p-6 text-center transition-all border hover:border-emerald-500 group">
+                    <div class="mb-3 text-4xl transition-transform group-hover:scale-110">
+                      {{ cat.icon }}
+                    </div>
+                    <div class="text-sm font-medium tracking-wide">
+                      {{ cat.name }}
+                    </div>
+                  </button>
+                }
+              </div>
+              @if (isFieldInvalid('category')) {
+                <p class="mt-2 text-sm text-red-500">
+                  Veuillez sélectionner une catégorie
+                </p>
+              }
+            </div>
+
+            <!-- Description -->
+            <div>
+              <label class="block mb-3 text-sm font-medium tracking-wide">
+                DESCRIPTION <span class="text-red-500">*</span>
+              </label>
+              <textarea 
+                formControlName="description"
+                rows="6"
+                placeholder="Décrivez votre annonce en détail..."
+                class="w-full px-4 py-4 text-white placeholder-gray-500 transition-all bg-black border resize-none focus:outline-none"
+                [ngClass]="{'border-white/10': !isFieldInvalid('description')}"
+                [class.border-red-500]="isFieldInvalid('description')">
+              </textarea>
+              <div class="flex justify-between mt-2">
+                @if (isFieldInvalid('description')) {
+                  <p class="text-sm text-red-500">
+                    La description est requise (minimum 20 caractères)
+                  </p>
+                } @else {
+                  <p class="text-sm text-gray-500">
+                    {{ resourceForm.get('description')?.value?.length || 0 }} caractères
+                  </p>
+                }
+              </div>
+            </div>
+
+            <!-- Localisation -->
+            <div>
+              <label class="block mb-3 text-sm font-medium tracking-wide">
+                LOCALISATION <span class="text-red-500">*</span>
+              </label>
+              <input 
+                type="text"
+                formControlName="location"
+                placeholder="Ex: Douala, Akwa"
+                class="w-full px-4 py-4 text-white placeholder-gray-500 transition-all bg-black border focus:outline-none"
+                [ngClass]="{'border-white/10': !isFieldInvalid('location')}"
+                [class.border-red-500]="isFieldInvalid('location')">
+              @if (isFieldInvalid('location')) {
+                <p class="mt-2 text-sm text-red-500">
+                  La localisation est requise
+                </p>
+              }
+            </div>
+
+            <!-- Image Upload -->
+            <div>
+              <label class="block mb-3 text-sm font-medium tracking-wide">
+                IMAGE DE L'ANNONCE
+              </label>
+
+              <!-- Toggle Upload Method -->
+              <div class="flex mb-4 space-x-4">
+                <button
+                  type="button"
+                  (click)="uploadMethod.set('url')"
+                  [class.bg-emerald-500]="uploadMethod() === 'url'"
+                  [class.text-black]="uploadMethod() === 'url'"
+                  [class.bg-zinc-800]="uploadMethod() !== 'url'"
+                  class="flex-1 py-3 text-sm tracking-wide transition-all">
+                  🔗 URL D'IMAGE
+                </button>
+                <button
+                  type="button"
+                  (click)="uploadMethod.set('file')"
+                  [class.bg-emerald-500]="uploadMethod() === 'file'"
+                  [class.text-black]="uploadMethod() === 'file'"
+                  [class.bg-zinc-800]="uploadMethod() !== 'file'"
+                  class="flex-1 py-3 text-sm tracking-wide transition-all">
+                  📤 IMPORTER
+                </button>
+              </div>
+
+              <!-- URL Input -->
+              @if (uploadMethod() === 'url') {
+                <div>
+                  <input 
+                    type="url"
+                    formControlName="imageUrl"
+                    placeholder="https://exemple.com/image.jpg"
+                    class="w-full px-4 py-4 text-white placeholder-gray-500 transition-all bg-black border border-white/10 focus:outline-none focus:border-emerald-500">
+                  <p class="mt-2 text-sm text-gray-500">
+                    Ajoutez une URL d'image (Unsplash, Pexels, etc.)
+                  </p>
+                </div>
+              }
+
+              <!-- File Upload with Drag & Drop -->
+              @if (uploadMethod() === 'file') {
+                <div>
+                  <input 
+                    #fileInput
+                    type="file"
+                    accept="image/jpeg,image/png,image/jpg,image/webp"
+                    (change)="onFileSelected($event)"
+                    class="hidden">
+                  
+                  <div
+                    (click)="fileInput.click()"
+                    (dragover)="onDragOver($event)"
+                    (dragleave)="onDragLeave($event)"
+                    (drop)="onDrop($event)"
+                    [class.border-emerald-500]="isDragging()"
+                    [ngClass]="{'bg-emerald-500/10':isDragging()}"
+                    class="px-6 py-12 text-center transition-all border-2 border-dashed cursor-pointer border-white/20 bg-zinc-900 hover:border-emerald-500/50">
+                    
+                    @if (!uploadedFile()) {
+                      <div>
+                        <div class="mb-4 text-5xl">📸</div>
+                        <p class="mb-2 text-white">
+                          Cliquez pour sélectionner ou glissez-déposez
+                        </p>
+                        <p class="text-sm text-gray-500">
+                          JPG, PNG, WEBP - Max {{ maxFileSize / (1024 * 1024) }}MB
+                        </p>
+                      </div>
+                    } @else {
+                      <div>
+                        <div class="mb-4 text-5xl">✓</div>
+                        <p class="mb-2 text-emerald-500">
+                          {{ uploadedFile()?.name }}
+                        </p>
+                        <p class="text-sm text-gray-400">
+                          {{ formatFileSize(uploadedFile()?.size || 0) }}
+                        </p>
+                      </div>
+                    }
+                  </div>
+
+                  <!-- File Error -->
+                  @if (fileError()) {
+                    <p class="flex items-center mt-2 space-x-2 text-sm text-red-500">
+                      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                      </svg>
+                      <span>{{ fileError() }}</span>
+                    </p>
+                  }
+
+                  <div class="mt-4 space-y-1 text-xs text-gray-500">
+                    <p>✓ Formats acceptés : JPEG, PNG, WEBP</p>
+                    <p>✓ Taille maximale : {{ maxFileSize / (1024 * 1024) }}MB ({{ maxFileSize / 1024 }}KB)</p>
+                    <p>✓ Dimensions recommandées : 1200x800px minimum</p>
+                  </div>
+                </div>
+              }
+              
+              <!-- Image Preview -->
+              @if (imagePreview()) {
+                <div class="relative mt-6">
+                  <p class="mb-3 text-sm font-medium tracking-wide">APERÇU</p>
+                  <div class="relative overflow-hidden border border-white/10">
+                    <img 
+                      [src]="imagePreview()" 
+                      alt="Aperçu"
+                      class="object-cover w-full h-64"
+                      (error)="onImageError()">
+                    <button
+                      type="button"
+                      (click)="clearImage()"
+                      class="absolute p-2 text-white transition-colors bg-red-500 shadow-lg top-4 right-4 hover:bg-red-600">
+                      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                      </svg>
+                    </button>
+                  </div>
+                </div>
+              }
+            </div>
+
+            <!-- Date d'expiration (optionnelle) -->
+            <div>
+              <label class="block mb-3 text-sm font-medium tracking-wide">
+                DATE D'EXPIRATION (Optionnel)
+              </label>
+              <input 
+                type="date"
+                formControlName="expiresAt"
+                [min]="minDate"
+                class="w-full px-4 py-4 text-white transition-all bg-black border border-white/10 focus:outline-none focus:border-emerald-500">
+              <p class="mt-2 text-sm text-gray-500">
+                L'annonce sera automatiquement désactivée après cette date
+              </p>
+            </div>
+
+            <!-- Contact Info -->
+            <div class="pt-8 border-t border-white/10">
+              <h3 class="mb-6 text-xl font-light">Informations de contact</h3>
+              
+              <div class="space-y-6">
+                <!-- Email -->
+                <div>
+                  <label class="block mb-3 text-sm font-medium tracking-wide">
+                    EMAIL <span class="text-red-500">*</span>
+                  </label>
+                  <input 
+                    type="email"
+                    formControlName="contactEmail"
+                    placeholder="votre@email.cm"
+                    class="w-full px-4 py-4 text-white placeholder-gray-500 transition-all bg-black border focus:outline-none"
+                    [ngClass]="{'border-white/10': !isFieldInvalid('contactEmail')}"
+                    [class.border-red-500]="isFieldInvalid('contactEmail')">
+                  @if (isFieldInvalid('contactEmail')) {
+                    <p class="mt-2 text-sm text-red-500">
+                      Email valide requis
+                    </p>
+                  }
+                </div>
+
+                <!-- WhatsApp -->
+                <div>
+                  <label class="block mb-3 text-sm font-medium tracking-wide">
+                    NUMÉRO WHATSAPP (Optionnel)
+                  </label>
+                  <input 
+                    type="tel"
+                    formControlName="whatsapp"
+                    placeholder="+237 6XX XX XX XX"
+                    class="w-full px-4 py-4 text-white placeholder-gray-500 transition-all bg-black border border-white/10 focus:outline-none focus:border-emerald-500">
+                  <p class="mt-2 text-sm text-gray-500">
+                    Format: +237XXXXXXXXX
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Terms -->
+            <div class="pt-8 border-t border-white/10">
+              <label class="flex items-start space-x-3 cursor-pointer group">
+                <input 
+                  type="checkbox"
+                  formControlName="acceptTerms"
+                  class="w-5 h-5 mt-1 transition-all bg-black border border-white/20 checked:bg-emerald-500 checked:border-emerald-500 focus:outline-none">
+                <span class="text-sm text-gray-400 transition-colors group-hover:text-white">
+                  J'accepte les <a href="#" class="text-emerald-500 hover:underline">conditions d'utilisation</a> et confirme que cette annonce respecte les règles de la communauté.
+                </span>
+              </label>
+              @if (isFieldInvalid('acceptTerms')) {
+                <p class="mt-2 text-sm text-red-500">
+                  Vous devez accepter les conditions d'utilisation
+                </p>
+              }
+            </div>
+
+            <!-- Actions -->
+            <div class="flex flex-col gap-4 pt-8 sm:flex-row">
+              <button
+                type="button"
+                (click)="onCancel()"
+                class="flex-1 px-8 py-4 text-sm font-medium tracking-wide transition-all border border-white/30 hover:bg-white/10">
+                ANNULER
+              </button>
+              <button
+                type="button"
+                (click)="onSubmit()"
+                [disabled]="isSubmitting()"
+                class="flex-1 px-8 py-4 text-sm font-medium tracking-wide text-black transition-all bg-emerald-500 hover:bg-emerald-400 disabled:bg-gray-600 disabled:cursor-not-allowed">
+
+                <!-- Quand on soumet -->
+                <ng-container *ngIf="isSubmitting(); else normalState">
+                  <span class="flex items-center justify-center space-x-2">
+                    <svg class="w-5 h-5 animate-spin" fill="none" viewBox="0 0 24 24">
+                      <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                      <path
+                        class="opacity-75"
+                        fill="currentColor"
+                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 
+                        5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 
+                        5.824 3 7.938l3-2.647z">
+                      </path>
+                    </svg>
+                    <span>PUBLICATION...</span>
+                  </span>
+                </ng-container>
+
+                <!-- Sinon -->
+                <ng-template #normalState>
+                  {{ isEditMode() ? 'METTRE À JOUR' : 'PUBLIER L\'ANNONCE' }}
+                </ng-template>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Help Section -->
+        <div class="p-6 mt-12 border bg-emerald-500/10 border-emerald-500/30">
+          <h3 class="mb-4 text-lg font-medium text-emerald-500">
+            💡 Conseils pour une bonne annonce
+          </h3>
+          <ul class="space-y-2 text-sm text-gray-300">
+            <li>• Soyez précis et honnête dans votre description</li>
+            <li>• Ajoutez des photos de qualité pour attirer l'attention</li>
+            <li>• Indiquez clairement votre localisation</li>
+            <li>• Répondez rapidement aux messages</li>
+            <li>• Mettez à jour le statut de votre annonce régulièrement</li>
+          </ul>
+        </div>
+      </div>
+    </div>
