@@ -9,11 +9,12 @@ import { HeaderComponent } from './core/components/header/header.component';
 import { FooterComponent } from './core/components/footer/footer.component';
 import { NotificationService } from './core/services/notification.service';
 import { ParticlesBackgroundComponent } from './shared/components/particles-background/particles-background.component';
+import { HttpClientModule } from '@angular/common/http';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [CommonModule, RouterOutlet, HeaderComponent, FooterComponent, ParticlesBackgroundComponent],
+  imports: [CommonModule, RouterOutlet, HeaderComponent, FooterComponent, ParticlesBackgroundComponent, HttpClientModule],
   template: `
       <!-- <app-particles-background
       [particleCount]="40"

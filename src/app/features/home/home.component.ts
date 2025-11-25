@@ -11,11 +11,12 @@ import { CategoryService } from '../../core/services/category.service';
 import { CardResourceComponent } from '../../shared/components/card-resource/card-resource.component';
 import { Resource } from '../../core/models/resource.model';
 import { ParticlesBackgroundComponent } from '../../shared/components/particles-background/particles-background.component';
+import { HttpClientModule } from '@angular/common/http';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule, RouterLink, CardResourceComponent, ParticlesBackgroundComponent],
+  imports: [CommonModule, RouterLink, CardResourceComponent, ParticlesBackgroundComponent, HttpClientModule],
   template: `
     <!-- Particles Canvas -->
     <!-- <canvas #particlesCanvas class="particles-canvas"></canvas> -->
@@ -48,11 +49,11 @@ import { ParticlesBackgroundComponent } from '../../shared/components/particles-
         <div class="max-w-7xl mx-auto text-center w-full">
           
           <!-- Animated Icon -->
-          <div class="animate-fade-in delay-100">
+          <!-- <div class="animate-fade-in delay-100">
             <div class="float-animation inline-block text-7xl md:text-8xl mb-8">
               🌍
             </div>
-          </div>
+          </div> -->
           
           <!-- Main Title -->
           <h1 class="text-5xl md:text-7xl lg:text-8xl font-light mb-8 leading-tight animate-fade-in delay-200">

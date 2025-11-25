@@ -2,15 +2,20 @@
 // RESOURCE SERVICE - services/resource.service.ts
 // ========================
 
-import { Injectable, signal, computed } from '@angular/core';
+import { Injectable, signal, computed, inject } from '@angular/core';
 import { Resource } from '../models/resource.model';
 import { Category, Stats } from '../models/category.model';
+import { ApiService } from './api.service';
+import { map } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ResourceService {
   // State Management avec Signals
+  // private resources = signal<Resource[]>([]);
+  private apiService = inject(ApiService);
+
   private resources = signal<Resource[]>([
     {
       id: '1',
@@ -200,4 +205,60 @@ export class ResourceService {
   getCategoryColor(categoryId: string): string {
     return this.categories().find(c => c.id === categoryId)?.color || '#6b7280';
   }
+
+
+  // Fetch all resources
+  fetchResources(params?: any) {
+    return this.apiService.get<any>('/resources', params).pipe(
+      map(response => {
+        if (response.success) {
+          this.resources.set(response.data);
+        }
+        return response;
+      })
+    );
+  }
+
+  // Get single resource
+  // getResourceById(id: string) {
+  //   return this.apiService.get<any>(`/resources/${id}`);
+  // }
+
+  // Create resource
+  createResource(data: any) {
+    return this.apiService.post<any>('/resources', data).pipe(
+      map(response => {
+        if (response.success) {
+          this.resources.update(list => [...list, response.data]);
+        }
+        return response;
+      })
+    );
+  }
+
+  // Update resource
+  // updateResource(id: string, data: any) {
+  //   return this.apiService.put<any>(`/resources/${id}`, data).pipe(
+  //     map(response => {
+  //       if (response.success) {
+  //         this.resources.update(list =>
+  //           list.map(r => r.id === id ? response.data : r)
+  //         );
+  //       }
+  //       return response;
+  //     })
+  //   );
+  // }
+
+  // Delete resource
+  // deleteResource(id: string) {
+  //   return this.apiService.delete<any>(`/resources/${id}`).pipe(
+  //     map(response => {
+  //       if (response.success) {
+  //         this.resources.update(list => list.filter(r => r.id !== id));
+  //       }
+  //       return response;
+  //     })
+  //   );
+  // }
 }

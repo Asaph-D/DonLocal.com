@@ -355,3 +355,178 @@ Angular CLI does not come with an end-to-end testing framework by default. You c
 ## Additional Resources
 
 For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+
+======================================================================================================================================================================================================================================================================================================================================================================================================
+
+// ==========================================
+// 7. DÉPLOIEMENT - Guide complet
+// ==========================================
+
+/*
+==========================================
+DÉPLOIEMENT BACKEND (API)
+==========================================
+
+OPTION 1: RENDER.COM (Gratuit)
+--------------------------------
+1. Créer un compte sur render.com
+2. Connecter votre repo GitHub
+3. Créer un "Web Service"
+4. Configuration:
+   - Build Command: npm install
+   - Start Command: npm start
+   - Environment: Node
+5. Variables d'environnement:
+   - NODE_ENV=production
+   - MONGODB_URI=your_mongodb_atlas_uri
+   - JWT_SECRET=your_secret
+   - CLOUDINARY_...
+   - CLIENT_URL=https://your-frontend.com
+
+OPTION 2: RAILWAY.APP (Gratuit)
+---------------------------------
+1. Créer un compte sur railway.app
+2. New Project > Deploy from GitHub
+3. Add variables d'environnement
+4. Deploy automatique
+
+OPTION 3: HEROKU
+-----------------
+1. Installer Heroku CLI
+2. Commandes:
+   heroku login
+   heroku create donlocal-api
+   heroku config:set NODE_ENV=production
+   heroku config:set MONGODB_URI=...
+   git push heroku main
+
+==========================================
+DÉPLOIEMENT FRONTEND (Angular)
+==========================================
+
+OPTION 1: VERCEL (Recommandé)
+-------------------------------
+1. Installer Vercel CLI:
+   npm i -g vercel
+
+2. Build:
+   ng build --configuration production
+
+3. Deploy:
+   vercel --prod
+
+OPTION 2: NETLIFY
+------------------
+1. Build:
+   ng build --configuration production
+
+2. Déployer le dossier dist/
+
+3. Configuration _redirects:
+   /* /index.html 200
+
+OPTION 3: FIREBASE HOSTING
+----------------------------
+1. Installer Firebase CLI:
+   npm i -g firebase-tools
+
+2. Init:
+   firebase init hosting
+
+3. Build:
+   ng build --configuration production
+
+4. Deploy:
+   firebase deploy
+
+==========================================
+BASE DE DONNÉES
+==========================================
+
+MONGODB ATLAS (Gratuit)
+------------------------
+1. Créer un compte: https://mongodb.com/cloud/atlas
+2. Créer un cluster gratuit (M0)
+3. Database Access: Créer un user
+4. Network Access: Ajouter 0.0.0.0/0 (tous)
+5. Connect: Copier l'URI de connexion
+6. Remplacer <password> par votre mot de passe
+
+URI Format:
+mongodb+srv://username:password@cluster.mongodb.net/donlocal
+
+==========================================
+CLOUDINARY (Upload images)
+==========================================
+
+1. Créer un compte gratuit: https://cloudinary.com
+2. Dashboard > Account Details
+3. Copier:
+   - Cloud Name
+   - API Key
+   - API Secret
+4. Ajouter dans .env
+
+==========================================
+TESTS DE L'API
+==========================================
+
+# Test local
+curl http://localhost:5000/api/resources
+
+# Test production
+curl https://your-api.com/api/resources
+
+# Test avec Postman/Insomnia
+Importer la collection depuis:
+https://www.postman.com/downloads/
+
+==========================================
+MONITORING & LOGS
+==========================================
+
+# Voir les logs Render
+render logs --tail
+
+# Voir les logs Heroku
+heroku logs --tail
+
+# MongoDB Atlas
+Monitoring > Metrics
+
+==========================================
+SÉCURITÉ - Checklist
+==========================================
+
+✅ Variables d'environnement sécurisées
+✅ CORS configuré correctement
+✅ Rate limiting activé
+✅ Helmet.js pour les headers
+✅ Validation des données (express-validator)
+✅ JWT avec expiration
+✅ Pas de données sensibles dans les logs
+✅ HTTPS obligatoire en production
+✅ Backup de la base de données
+
+==========================================
+COMMANDES UTILES
+==========================================
+
+# Build Angular
+ng build --configuration production
+
+# Test build Angular local
+cd dist/donlocal
+npx http-server -p 4200
+
+# Variables d'env backend
+heroku config:set KEY=VALUE
+render env set KEY=VALUE
+
+# MongoDB backup
+mongodump --uri="mongodb+srv://..."
+
+# Logs
+heroku logs --tail
+vercel logs
+*/

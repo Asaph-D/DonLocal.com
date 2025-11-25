@@ -11,7 +11,7 @@ import { RouterLink } from '@angular/router';
   standalone: true,
   imports: [CommonModule, RouterLink],
   template: `
-    <footer class="border-t z-50 border-white/10 bg-black text-white">
+    <footer class="border-t z-50 border-white/10 bg-black relative text-white">
       <!-- Main Footer -->
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
